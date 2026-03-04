@@ -158,7 +158,8 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 <hr class="section-rule heavy">
 <div style="display:flex;justify-content:space-between;align-items:baseline">
 <div class="section-label" style="margin-bottom:0;border-bottom:none;padding-bottom:0">M&#228;tningar</div>
-<div style="display:flex;gap:8px"><button class="btn btn-teal" onclick="loadDemo()">Ladda demo</button><button class="btn btn-ghost" onclick="resetMeasurements()">&#197;terst&#228;ll</button></div>
+<div style="display:flex;gap:8px"><button class="btn btn-teal" onclick="loadDemo()">Ladda demo</button><button class="btn btn-teal" onclick="el('xmlFile').click()">Importera XML</button><button class="btn btn-ghost" onclick="resetMeasurements()">&#197;terst&#228;ll</button></div>
+<input type="file" id="xmlFile" accept=".xml" style="display:none" onchange="loadXml(this)">
 </div><div style="height:16px"></div>
 
 <div class="measures-grid animate-in delay-2">
@@ -245,6 +246,7 @@ function renderRefTable(sex,ag){if(!ag)return;el('refTitle').textContent='Refere
 function copyReport(){navigator.clipboard.writeText(el('reportPre').textContent).then(function(){var btn=el('copyBtn');btn.textContent='\u2713 Kopierad!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Kopiera rapport till urklipp';btn.classList.remove('copied');},2000);});}
 function loadDemo(){el('sex').value='M';el('dob').value='1984-04-13';el('weight').value='73';el('height').value='180';el('lvEDV').value='181.2';el('lvESV').value='87.4';el('lvMass').value='51.8';el('rvEDV').value='186.3';el('rvESV').value='87.3';recalc();}
 function resetMeasurements(){el('lvEDV').value='';el('lvESV').value='';el('lvMass').value='';el('rvEDV').value='';el('rvESV').value='';recalc();}
+function loadXml(input){if(!input.files||!input.files[0])return;var reader=new FileReader();reader.onload=function(e){var parser=new DOMParser(),doc=parser.parseFromString(e.target.result,'text/xml');var attr=function(path){var n=doc.querySelector(path);return n?n.getAttribute('val'):''};var sex=attr('Report>Patient>Sex');if(sex)el('sex').value=sex;var dob=attr('Report>Patient>BirthDate');if(dob){el('dob').value=dob;handleDobBlur(el('dob'));}var w=attr('Report>Patient>Weight');if(w)el('weight').value=w;var h=attr('Report>Patient>Height');if(h)el('height').value=h;var lv=doc.querySelector('Report>SAX3DFunction>LV');if(lv){var n;n=lv.querySelector('EDV');if(n)el('lvEDV').value=n.getAttribute('val');n=lv.querySelector('ESV');if(n)el('lvESV').value=n.getAttribute('val');n=lv.querySelector('MyoMass_diast');if(n)el('lvMass').value=n.getAttribute('val');}var rv=doc.querySelector('Report>SAX3DFunction>RV');if(rv){var n;n=rv.querySelector('EDV');if(n)el('rvEDV').value=n.getAttribute('val');n=rv.querySelector('ESV');if(n)el('rvESV').value=n.getAttribute('val');}recalc();};reader.readAsText(input.files[0]);input.value='';}
 </script>
 </body>
 </html>
