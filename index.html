@@ -123,8 +123,9 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 .btn-copy-big.copied{background:var(--ft-jade)}
 .pw-wrap{position:relative}
 .pw-wrap input{padding-right:40px}
-.pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--ft-ink-faint);padding:2px;line-height:1}
+.pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ft-ink-faint);padding:4px;line-height:0;display:flex;align-items:center}
 .pw-toggle:hover{color:var(--ft-ink)}
+.pw-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 </style>
 </head>
 <body>
@@ -139,7 +140,7 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 <h2>Workspace</h2><p>Logga in f&#246;r att redigera referensv&#228;rden</p>
 <div class="login-err" id="loginErr">Fel anv&#228;ndarnamn eller l&#246;senord</div>
 <div class="field-group"><label for="loginUser">Anv&#228;ndarnamn</label><input type="text" id="loginUser" autocomplete="off"></div>
-<div class="field-group"><label for="loginPass">L&#246;senord</label><div class="pw-wrap"><input type="password" id="loginPass"><button type="button" class="pw-toggle" id="pwToggle" onclick="togglePw()">&#128065;&#8205;&#128683;</button></div></div>
+<div class="field-group"><label for="loginPass">L&#246;senord</label><div class="pw-wrap"><input type="password" id="loginPass"><button type="button" class="pw-toggle" id="pwToggle" onclick="togglePw()"><svg viewBox="0 0 24 24" id="eyeIcon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><line id="eyeSlash" x1="2" y1="2" x2="22" y2="22"/></svg></button></div></div>
 <div style="display:flex;gap:10px;margin-top:20px"><button class="btn btn-primary" onclick="doLogin()">Logga in</button><button class="btn btn-ghost" onclick="closeLogin()">Avbryt</button></div>
 </div></div>
 
@@ -232,7 +233,7 @@ try{var sv=localStorage.getItem('cardiac_mri_custom_refs');if(sv){REFS=JSON.pars
 var AGE_GROUPS=["20-29","30-39","40-49","50-59","60-69","70-79"];
 var wsLoggedIn=false,wsCurrentTab="F-LV";
 
-function togglePw(){var inp=el('loginPass'),btn=el('pwToggle');if(inp.type==='password'){inp.type='text';btn.innerHTML='&#128065;';}else{inp.type='password';btn.innerHTML='&#128065;&#8205;&#128683;';}}
+function togglePw(){var inp=el('loginPass'),slash=el('eyeSlash');if(inp.type==='password'){inp.type='text';slash.style.display='none';}else{inp.type='password';slash.style.display='';}}
 function openWorkspace(){if(wsLoggedIn){document.getElementById('wsPanel').classList.add('open');window.scrollTo({top:0,behavior:'smooth'});}else{document.getElementById('loginModal').classList.add('open');document.getElementById('loginErr').style.display='none';document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';setTimeout(function(){document.getElementById('loginUser').focus();},100);}}
 function closeLogin(){document.getElementById('loginModal').classList.remove('open');}
 function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')});}
@@ -284,7 +285,7 @@ function copyReport(){navigator.clipboard.writeText(el('reportPre').innerText).t
 function loadDemo(){el('sex').value='M';el('dob').value='1984-04-13';el('weight').value='73';el('height').value='180';el('lvEDV').value='181.2';el('lvESV').value='87.4';el('lvMass').value='51.8';el('rvEDV').value='186.3';el('rvESV').value='87.3';recalc();}
 function resetMeasurements(){el('sex').value='F';el('dob').value='';el('weight').value='';el('height').value='';el('lvEDV').value='';el('lvESV').value='';el('lvMass').value='';el('rvEDV').value='';el('rvESV').value='';el('dob').style.borderColor='';el('dob').style.color='var(--ft-ink)';el('dropSuccess').style.display='none';el('manualDetails').setAttribute('open','');recalc();}
 function loadXml(input){if(!input.files||!input.files[0])return;processXmlFile(input.files[0]);input.value='';}
-function processXmlFile(file){var reader=new FileReader();reader.onload=function(e){var parser=new DOMParser(),doc=parser.parseFromString(e.target.result,'text/xml');if(doc.querySelector('parsererror')){var ds=el('dropSuccess');ds.textContent='\u2718 Kunde inte tolka XML-filen';ds.style.color='var(--ft-crimson)';ds.style.display='';return;}var attr=function(path){var n=doc.querySelector(path);return n?n.getAttribute('val'):''};var sex=attr('Report>Patient>Sex');if(sex)el('sex').value=sex;var dob=attr('Report>Patient>BirthDate');if(dob){el('dob').value=dob;handleDobBlur(el('dob'));}var w=attr('Report>Patient>Weight');if(w)el('weight').value=w;var h=attr('Report>Patient>Height');if(h)el('height').value=h;var lv=doc.querySelector('Report>SAX3DFunction>LV');if(lv){var n;n=lv.querySelector('EDV');if(n)el('lvEDV').value=n.getAttribute('val');n=lv.querySelector('ESV');if(n)el('lvESV').value=n.getAttribute('val');n=lv.querySelector('MyoMass_diast');if(n)el('lvMass').value=n.getAttribute('val');}var rv=doc.querySelector('Report>SAX3DFunction>RV');if(rv){var n;n=rv.querySelector('EDV');if(n)el('rvEDV').value=n.getAttribute('val');n=rv.querySelector('ESV');if(n)el('rvESV').value=n.getAttribute('val');}var ds=el('dropSuccess');ds.textContent='\u2713 '+file.name+' importerad';ds.style.color='';ds.style.display='';recalc();};reader.readAsText(file);}
+function processXmlFile(file){var reader=new FileReader();reader.onload=function(e){var parser=new DOMParser(),doc=parser.parseFromString(e.target.result,'text/xml');if(doc.querySelector('parsererror')){var ds=el('dropSuccess');ds.textContent='\u2718 Kunde inte tolka XML-filen';ds.style.color='var(--ft-crimson)';ds.style.display='';return;}var attr=function(path){var n=doc.querySelector(path);return n?n.getAttribute('val'):''};var sex=attr('Report>Patient>Sex');if(sex)el('sex').value=sex;var dob=attr('Report>Patient>BirthDate');if(dob){el('dob').value=dob;handleDobBlur(el('dob'));}var w=attr('Report>Patient>Weight');if(w&&parseFloat(w)>0)el('weight').value=w;var h=attr('Report>Patient>Height');if(h&&parseFloat(h)>0)el('height').value=h;var lv=doc.querySelector('Report>SAX3DFunction>LV');if(lv){var n;n=lv.querySelector('EDV');if(n)el('lvEDV').value=n.getAttribute('val');n=lv.querySelector('ESV');if(n)el('lvESV').value=n.getAttribute('val');n=lv.querySelector('MyoMass_diast');if(n)el('lvMass').value=n.getAttribute('val');}var rv=doc.querySelector('Report>SAX3DFunction>RV');if(rv){var n;n=rv.querySelector('EDV');if(n)el('rvEDV').value=n.getAttribute('val');n=rv.querySelector('ESV');if(n)el('rvESV').value=n.getAttribute('val');}var ds=el('dropSuccess');ds.textContent='\u2713 '+file.name+' importerad';ds.style.color='';ds.style.display='';recalc();};reader.readAsText(file);}
 /* Drag and drop */
 (function(){var dz=el('dropZone');dz.addEventListener('dragover',function(e){e.preventDefault();e.stopPropagation();dz.classList.add('drag-over');});dz.addEventListener('dragleave',function(){dz.classList.remove('drag-over');});dz.addEventListener('drop',function(e){e.preventDefault();e.stopPropagation();dz.classList.remove('drag-over');var f=e.dataTransfer.files;if(f&&f[0])processXmlFile(f[0]);});})();
 </script>
