@@ -1,75 +1,75 @@
 # Hjärt-MR Referensomvandlare
 
-### [▶ Öppna verktyget / Launch the tool](https://nethahussain.github.io/cardiac-mri-reference/)
+### [▶ Öppna verktyget](https://nethahussain.github.io/cardiac-mri-reference/)
 
-**Cardiac MRI Reference Converter** — a browser-based clinical tool for radiologists reporting cardiac MRI examinations. Instantly compares ventricular volumes against age- and sex-specific reference ranges.
+**Hjärt-MR Referensomvandlare** — ett webbläsarbaserat kliniskt verktyg för radiologer som granskar hjärt-MR-undersökningar. Jämför ventrikelvolymer mot ålders- och könsspecifika referensvärden direkt i webbläsaren.
 
-## What it does
+## Så fungerar det
 
-1. Enter patient demographics (sex, date of birth, weight, height)
-2. Enter raw cardiac MRI measurements (EDV, ESV, LV mass) for left and right ventricles
-3. The tool automatically calculates:
-   - **BSA** (Mosteller formula)
-   - **Stroke Volume** (SV = EDV − ESV)
-   - **Ejection Fraction** (EF = SV/EDV × 100%)
-   - **BSA-indexed values** (EDV/BSA, ESV/BSA, SV/BSA, LV mass/BSA)
-4. Each indexed value is compared against the correct reference range for the patient's age decade and sex
-5. Results are color-coded: **Normalt** (green), **Förhöjt** (red), **Lågt** (amber)
-6. A formatted clinical report can be copied to clipboard with one click for pasting into RIS/EMR
+1. Fyll i patientdata (kön, födelsedatum, vikt, längd)
+2. Mata in uppmätta volymer från hjärt-MR (EDV, ESV, LV-massa) för vänster och höger kammare
+3. Verktyget beräknar automatiskt:
+   - **BSA** (Mostellers formel: √(vikt × längd / 3600))
+   - **Slagvolym** (SV = EDV − ESV)
+   - **Ejektionsfraktion** (EF = SV/EDV × 100 %)
+   - **BSA-indexerade värden** (EDV/BSA, ESV/BSA, SV/BSA, LV-massa/BSA)
+4. Varje indexerat värde jämförs med referensintervallet för patientens åldersdekad och kön
+5. Resultaten färgkodas: **Normalt** (grönt), **Förhöjt** (rött), **Lågt** (orange)
+6. En formaterad rapport kan kopieras till urklipp med en knapptryckning för inklistring i AGFA eller andra system
 
-## Screenshot
+## Referensvärden
 
-Open `index.html` in any browser and click **Ladda demo** to see it in action.
+Ålders- och könsspecifika referensvärden för ålder 20–79:
 
-## Reference ranges
-
-Age- and sex-specific reference values for ages 20–79, covering:
-
-| Chamber | Parameters |
+| Kammare | Parametrar |
 |---------|-----------|
-| **Left ventricle (Vä kammare)** | EDV/BSA, ESV/BSA, SV/BSA, EF, LV mass/BSA |
-| **Right ventricle (Hö kammare)** | EDV/BSA, ESV/BSA, SV/BSA, EF |
+| **Vänster kammare (LV)** | EDV/BSA, ESV/BSA, SV/BSA, EF, LV-massa/BSA |
+| **Höger kammare (RV)** | EDV/BSA, ESV/BSA, SV/BSA, EF |
 
-Reference data based on **David Molnar, v.2025-05-02**.
+Referensdata baserad på **David Molnar, v.2025-05-02**.
 
-## Usage
+## Användning
 
-No installation required. Just open the HTML file in any modern browser.
+Ingen installation krävs. Öppna HTML-filen i valfri modern webbläsare.
 
-### Option A — Local file
-Download `index.html` and double-click to open.
+### Alternativ A — Lokal fil
+Ladda ner `index.html` och dubbelklicka för att öppna.
 
-### Option B — GitHub Pages
-If hosted via GitHub Pages, access directly at:
+### Alternativ B — GitHub Pages
+Öppna direkt via:
 ```
 https://nethahussain.github.io/cardiac-mri-reference/
 ```
 
-## Features
+## Funktioner
 
-- **Single file, zero dependencies** — everything runs in one self-contained HTML file
-- **Works offline** — only Google Fonts require internet (falls back to system serif fonts)
-- **Instant calculation** — results update in real time as you type
-- **Visual gauge bars** — see at a glance where values fall relative to normal ranges
-- **Clipboard report** — one-click copy of formatted report text (Swedish clinical format with Vä kammare / Hö kammare)
-- **Flexible date input** — type YYYYMMDD or YYYY-MM-DD
-- **Responsive** — works on desktop, tablet, and mobile
-- **No patient data stored** — everything is in memory only, nothing persists
+- **En enda fil, inga beroenden** — allt körs i en självständig HTML-fil
+- **Fungerar offline** — bara Google Fonts kräver internetanslutning (faller tillbaka till systemtypsnitt)
+- **Direkt beräkning** — resultaten uppdateras i realtid medan du skriver
+- **Visuella mätare** — se direkt var värdena hamnar i förhållande till normalintervallet
+- **Kopiera rapport** — kopiera formaterad rapporttext till urklipp med ett klick
+- **Flexibel datuminmatning** — skriv ÅÅÅÅMMDD eller ÅÅÅÅ-MM-DD
+- **Responsiv** — fungerar på dator, surfplatta och mobil
+- **Ingen patientdata sparas** — allt hanteras lokalt i webbläsaren, ingenting skickas till någon server
 
-## Language
+## XML-import från CVi42
 
-The interface is in **Swedish** with English medical terminology (EDV, ESV, Ejection fraction, LV mass, etc.), designed for use in Swedish clinical environments.
+Verktyget stöder import av XML-filer från CVi42, uppbyggt enligt samma princip som David Molnars originalimplementation.
 
-## Credits
+## Workspace
 
-- **Reference values**: David Molnar, v.2025-05-02
-- **BSA formula**: Mosteller (√(weight × height / 3600))
-- **Original tool**: Based on `MRI_Reference_Converter_Updated_20251108.xlsm` by David Molnar
+Referensvärdena kan redigeras via Workspace (knappen uppe till höger). Ändrade värden sparas i webbläsarens localStorage och kan återställas till originalvärden.
 
-## Contact
+## Krediter
 
-For bug reports or errors in the code, contact: **nethahussain@gmail.com**
+- **Referensvärden**: David Molnar, v.2025-05-02
+- **BSA-formel**: Mosteller (√(vikt × längd / 3600))
+- **Originalverktyg**: Baserat på `MRI_Reference_Converter_Updated_20251108.xlsm` av David Molnar
 
-## License
+## Kontakt
 
-This project is released under [CC0 1.0 Universal](LICENSE) — dedicated to the public domain. No rights reserved.
+Vid eventuella fel i koden, kontakta: **nethahussain@gmail.com**
+
+## Licens
+
+Detta projekt är släppt under [CC0 1.0 Universal](LICENSE) — dedikerat till den publika domänen. Inga rättigheter förbehållna.
