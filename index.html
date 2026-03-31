@@ -103,6 +103,24 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 .ws-actions{display:flex;gap:10px;margin-top:18px;align-items:center;flex-wrap:wrap}
 .ws-msg{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;display:none}
 .ws-custom-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.06em;padding:2px 8px;border-radius:2px;background:var(--ft-amber-dim);color:var(--ft-mandarin);text-transform:uppercase}
+/* Drop zone */
+.drop-zone{border:2.5px dashed var(--ft-teal);border-radius:4px;padding:36px 24px;text-align:center;cursor:pointer;transition:all .25s;background:rgba(13,118,128,.04);margin-top:28px}
+.drop-zone:hover,.drop-zone.drag-over{background:rgba(13,118,128,.1);border-color:var(--ft-teal-light)}
+.drop-zone-icon{font-size:36px;margin-bottom:8px;color:var(--ft-teal);line-height:1}
+.drop-zone-text{font-family:'Source Serif 4',Georgia,serif;font-size:17px;color:var(--ft-ink);font-weight:600}
+.drop-zone-hint{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ft-ink-faint);margin-top:6px;letter-spacing:.02em}
+.drop-zone-success{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--ft-jade);margin-top:8px;display:none}
+/* Collapsible manual input */
+.manual-details{margin-top:24px}
+.manual-details summary{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ft-ink-light);cursor:pointer;padding:12px 0;list-style:none;display:flex;align-items:center;gap:8px;border-top:1px solid var(--ft-rule);border-bottom:1px solid var(--ft-rule);user-select:none}
+.manual-details summary::-webkit-details-marker{display:none}
+.manual-details summary::before{content:'\25B6';font-size:9px;transition:transform .2s;display:inline-block}
+.manual-details[open] summary::before{transform:rotate(90deg)}
+.manual-details summary:hover{color:var(--ft-ink)}
+/* Big copy button */
+.btn-copy-big{display:block;width:100%;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;letter-spacing:.08em;padding:16px 24px;border:none;border-radius:3px;cursor:pointer;transition:all .2s;background:var(--ft-pink);color:var(--ft-white);text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(153,15,61,.15)}
+.btn-copy-big:hover{background:var(--ft-pink-light);box-shadow:0 4px 16px rgba(153,15,61,.25)}
+.btn-copy-big.copied{background:var(--ft-jade)}
 </style>
 </head>
 <body>
@@ -139,30 +157,33 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 </div>
 </div>
 
-<hr class="section-rule heavy">
+<div class="drop-zone animate-in" id="dropZone" onclick="el('xmlFile').click()">
+<div class="drop-zone-icon">&#128196;</div>
+<div class="drop-zone-text">Importera XML fr&#229;n CVi42</div>
+<div class="drop-zone-hint">Dra och sl&#228;pp en XML-fil h&#228;r, eller klicka f&#246;r att v&#228;lja fil</div>
+<div class="drop-zone-success" id="dropSuccess"></div>
+<input type="file" id="xmlFile" accept=".xml" style="display:none" onchange="loadXml(this)">
+</div>
+
+<details class="manual-details" id="manualDetails">
+<summary>Manuell inmatning &mdash; patientdata &amp; m&#228;tningar</summary>
+
+<div style="height:16px"></div>
 <div class="section-label">Patientdata</div>
-<div class="patient-grid animate-in">
+<div class="patient-grid">
 <div class="field-group"><label for="sex">K&#246;n</label><select id="sex" onchange="recalc()"><option value="F">Kvinna</option><option value="M">Man</option></select></div>
 <div class="field-group"><label for="dob">F&#246;delsedatum</label><input type="text" id="dob" placeholder="&#197;&#197;&#197;&#197;MMDD" maxlength="10" oninput="handleDobInput(this)" onblur="handleDobBlur(this)" autocomplete="off" spellcheck="false"><div class="unit-hint">Skriv &#197;&#197;&#197;&#197;MMDD eller &#197;&#197;&#197;&#197;-MM-DD</div></div>
 <div class="field-group"><label for="weight">Vikt</label><input type="number" id="weight" step="0.1" min="1" placeholder="&#8212;" oninput="recalc()"><div class="unit-hint">kg</div></div>
 <div class="field-group"><label for="height">L&#228;ngd</label><input type="number" id="height" step="0.1" min="1" placeholder="&#8212;" oninput="recalc()"><div class="unit-hint">cm</div></div>
 </div>
 
-<div class="summary-row animate-in delay-1" id="summaryRow" style="display:none">
-<div class="summary-cell"><div class="s-label">&#197;lder</div><div class="s-value" id="sumAge">&#8212;</div><div class="s-unit">&#229;r</div></div>
-<div class="summary-cell"><div class="s-label">BSA (Mosteller)</div><div class="s-value" id="sumBSA">&#8212;</div><div class="s-unit">m&#178;</div><div class="unit-hint" style="margin-top:4px;text-align:center">&#8730;(vikt &#215; l&#228;ngd / 3600)</div></div>
-<div class="summary-cell"><div class="s-label">&#197;ldersgrupp</div><div class="s-value" id="sumGroup">&#8212;</div><div class="s-unit">&#229;r</div></div>
-<div class="summary-cell"><div class="s-label">K&#246;n</div><div class="s-value" id="sumSex">&#8212;</div><div class="s-unit"> </div></div>
-</div>
-
-<hr class="section-rule heavy">
+<hr class="section-rule">
 <div style="display:flex;justify-content:space-between;align-items:baseline">
 <div class="section-label" style="margin-bottom:0;border-bottom:none;padding-bottom:0">M&#228;tningar</div>
-<div style="display:flex;gap:8px"><button class="btn btn-teal" onclick="loadDemo()">Ladda demo</button><button class="btn btn-teal" onclick="el('xmlFile').click()">Importera XML</button><button class="btn btn-ghost" onclick="resetMeasurements()">&#197;terst&#228;ll</button></div>
-<input type="file" id="xmlFile" accept=".xml" style="display:none" onchange="loadXml(this)">
+<div style="display:flex;gap:8px"><button class="btn btn-teal" onclick="loadDemo()">Ladda demo</button><button class="btn btn-ghost" onclick="resetMeasurements()">&#197;terst&#228;ll</button></div>
 </div><div style="height:16px"></div>
 
-<div class="measures-grid animate-in delay-2">
+<div class="measures-grid">
 <div class="measure-panel"><h3>V&#228;nster kammare</h3><div class="chamber-sub">Left Ventricle (LV)</div><div class="measure-fields">
 <div class="field-group"><label for="lvEDV">EDV</label><input type="number" id="lvEDV" step="0.1" placeholder="End-diastolic volume" oninput="recalc()"><div class="unit-hint">ml</div></div>
 <div class="field-group"><label for="lvESV">ESV</label><input type="number" id="lvESV" step="0.1" placeholder="End-systolic volume" oninput="recalc()"><div class="unit-hint">ml</div></div>
@@ -172,17 +193,26 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 <div class="field-group"><label for="rvEDV">EDV</label><input type="number" id="rvEDV" step="0.1" placeholder="End-diastolic volume" oninput="recalc()"><div class="unit-hint">ml</div></div>
 <div class="field-group"><label for="rvESV">ESV</label><input type="number" id="rvESV" step="0.1" placeholder="End-systolic volume" oninput="recalc()"><div class="unit-hint">ml</div></div>
 </div></div></div>
+</details>
+
+<div class="summary-row animate-in delay-1" id="summaryRow" style="display:none">
+<div class="summary-cell"><div class="s-label">&#197;lder</div><div class="s-value" id="sumAge">&#8212;</div><div class="s-unit">&#229;r</div></div>
+<div class="summary-cell"><div class="s-label">BSA (Mosteller)</div><div class="s-value" id="sumBSA">&#8212;</div><div class="s-unit">m&#178;</div><div class="unit-hint" style="margin-top:4px;text-align:center">&#8730;(vikt &#215; l&#228;ngd / 3600)</div></div>
+<div class="summary-cell"><div class="s-label">&#197;ldersgrupp</div><div class="s-value" id="sumGroup">&#8212;</div><div class="s-unit">&#229;r</div></div>
+<div class="summary-cell"><div class="s-label">K&#246;n</div><div class="s-value" id="sumSex">&#8212;</div><div class="s-unit"> </div></div>
+</div>
 
 <div id="resultsSection" style="display:none">
 <hr class="section-rule heavy">
+<button class="btn-copy-big" id="copyBtn" onclick="copyReport()">Kopiera rapport till urklipp</button>
+<div style="height:16px"></div>
 <div class="section-label">F&#246;rhandsgranskning av rapport</div>
-<div class="btn-row" style="margin-bottom:16px"><button class="btn btn-primary" id="copyBtn" onclick="copyReport()">Kopiera rapport till urklipp</button></div>
-<div class="report-box animate-in delay-3"><pre class="report-pre" id="reportPre" contenteditable="true" spellcheck="false"></pre></div>
+<div class="report-box"><pre class="report-pre" id="reportPre" contenteditable="true" spellcheck="false"></pre></div>
 <hr class="section-rule">
 <div style="display:flex;justify-content:space-between;align-items:baseline">
 <div class="section-label" style="margin-bottom:0;border-bottom:none;padding-bottom:0">Resultat &amp; referensj&#228;mf&#246;relse</div>
 </div><div style="height:16px"></div>
-<div class="results-columns animate-in delay-4" id="resultsColumns"></div>
+<div class="results-columns" id="resultsColumns"></div>
 </div>
 
 <div id="refSection" style="display:none"><hr class="section-rule heavy">
@@ -244,10 +274,13 @@ var html='<div class="result-col"><div class="result-col-header"><h3>'+title+'</
 
 function renderRefTable(sex,ag){if(!ag)return;el('refTitle').textContent='Referensv\u00e4rden \u2014 '+(sex==='F'?'Kvinna':'Man')+', '+ag+' \u00e5r';var lv=REFS[sex]&&REFS[sex].LV?REFS[sex].LV[ag]:null,rv=REFS[sex]&&REFS[sex].RV?REFS[sex].RV[ag]:null,html='',sets=[['V\u00e4nster kammare',lv],['H\u00f6ger kammare',rv]];for(var i=0;i<sets.length;i++){var title=sets[i][0],data=sets[i][1];if(!data)continue;html+='<div><h3 style="font-family:\'Playfair Display\',Georgia,serif;font-size:16px;font-weight:700;margin-bottom:10px">'+title+'</h3><table class="ref-table"><thead><tr><th>Parameter</th><th>Intervall</th></tr></thead><tbody>';var keys=Object.keys(data);for(var j=0;j<keys.length;j++)html+='<tr><td>'+keys[j]+'</td><td>'+data[keys[j]][0]+'\u2013'+data[keys[j]][1]+'</td></tr>';html+='</tbody></table></div>';}el('refGrid').innerHTML=html;}
 
-function copyReport(){navigator.clipboard.writeText(el('reportPre').textContent).then(function(){var btn=el('copyBtn');btn.textContent='\u2713 Kopierad!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Kopiera rapport till urklipp';btn.classList.remove('copied');},2000);});}
+function copyReport(){navigator.clipboard.writeText(el('reportPre').textContent).then(function(){var btn=el('copyBtn');btn.textContent='\u2713 Kopierad till urklipp!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Kopiera rapport till urklipp';btn.classList.remove('copied');},2000);});}
 function loadDemo(){el('sex').value='M';el('dob').value='1984-04-13';el('weight').value='73';el('height').value='180';el('lvEDV').value='181.2';el('lvESV').value='87.4';el('lvMass').value='51.8';el('rvEDV').value='186.3';el('rvESV').value='87.3';recalc();}
 function resetMeasurements(){el('lvEDV').value='';el('lvESV').value='';el('lvMass').value='';el('rvEDV').value='';el('rvESV').value='';recalc();}
-function loadXml(input){if(!input.files||!input.files[0])return;var reader=new FileReader();reader.onload=function(e){var parser=new DOMParser(),doc=parser.parseFromString(e.target.result,'text/xml');var attr=function(path){var n=doc.querySelector(path);return n?n.getAttribute('val'):''};var sex=attr('Report>Patient>Sex');if(sex)el('sex').value=sex;var dob=attr('Report>Patient>BirthDate');if(dob){el('dob').value=dob;handleDobBlur(el('dob'));}var w=attr('Report>Patient>Weight');if(w)el('weight').value=w;var h=attr('Report>Patient>Height');if(h)el('height').value=h;var lv=doc.querySelector('Report>SAX3DFunction>LV');if(lv){var n;n=lv.querySelector('EDV');if(n)el('lvEDV').value=n.getAttribute('val');n=lv.querySelector('ESV');if(n)el('lvESV').value=n.getAttribute('val');n=lv.querySelector('MyoMass_diast');if(n)el('lvMass').value=n.getAttribute('val');}var rv=doc.querySelector('Report>SAX3DFunction>RV');if(rv){var n;n=rv.querySelector('EDV');if(n)el('rvEDV').value=n.getAttribute('val');n=rv.querySelector('ESV');if(n)el('rvESV').value=n.getAttribute('val');}recalc();};reader.readAsText(input.files[0]);input.value='';}
+function loadXml(input){if(!input.files||!input.files[0])return;processXmlFile(input.files[0]);input.value='';}
+function processXmlFile(file){var reader=new FileReader();reader.onload=function(e){var parser=new DOMParser(),doc=parser.parseFromString(e.target.result,'text/xml');var attr=function(path){var n=doc.querySelector(path);return n?n.getAttribute('val'):''};var sex=attr('Report>Patient>Sex');if(sex)el('sex').value=sex;var dob=attr('Report>Patient>BirthDate');if(dob){el('dob').value=dob;handleDobBlur(el('dob'));}var w=attr('Report>Patient>Weight');if(w)el('weight').value=w;var h=attr('Report>Patient>Height');if(h)el('height').value=h;var lv=doc.querySelector('Report>SAX3DFunction>LV');if(lv){var n;n=lv.querySelector('EDV');if(n)el('lvEDV').value=n.getAttribute('val');n=lv.querySelector('ESV');if(n)el('lvESV').value=n.getAttribute('val');n=lv.querySelector('MyoMass_diast');if(n)el('lvMass').value=n.getAttribute('val');}var rv=doc.querySelector('Report>SAX3DFunction>RV');if(rv){var n;n=rv.querySelector('EDV');if(n)el('rvEDV').value=n.getAttribute('val');n=rv.querySelector('ESV');if(n)el('rvESV').value=n.getAttribute('val');}var ds=el('dropSuccess');ds.textContent='\u2713 '+file.name+' importerad';ds.style.display='';el('manualDetails').removeAttribute('open');recalc();};reader.readAsText(file);}
+/* Drag and drop */
+(function(){var dz=el('dropZone');dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('drag-over');});dz.addEventListener('dragleave',function(){dz.classList.remove('drag-over');});dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('drag-over');var f=e.dataTransfer.files;if(f&&f[0])processXmlFile(f[0]);});})();
 </script>
 </body>
 </html>
