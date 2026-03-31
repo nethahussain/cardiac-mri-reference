@@ -6,16 +6,82 @@
 
 ## Så fungerar det
 
-1. Fyll i patientdata (kön, födelsedatum, vikt, längd)
+1. Importera XML eller fyll i patientdata manuellt (kön, födelsedatum, vikt, längd)
 2. Mata in uppmätta volymer från hjärt-MR (EDV, ESV, LV-massa) för vänster och höger kammare
-3. Verktyget beräknar automatiskt:
-   - **BSA** (Mostellers formel: √(vikt × längd / 3600))
-   - **Slagvolym** (SV = EDV − ESV)
-   - **Ejektionsfraktion** (EF = SV/EDV × 100 %)
-   - **BSA-indexerade värden** (EDV/BSA, ESV/BSA, SV/BSA, LV-massa/BSA)
-4. Varje indexerat värde jämförs med referensintervallet för patientens åldersdekad och kön
-5. Resultaten färgkodas: **Normalt** (grönt), **Förhöjt** (rött), **Lågt** (orange)
-6. En formaterad rapport kan kopieras till urklipp med en knapptryckning för inklistring i AGFA eller andra system
+3. Granska och redigera rapporten
+4. Kopiera till urklipp med ett klick för inklistring i AGFA eller andra system
+
+## Beräkningar
+
+### 1. BSA (Body Surface Area) — Mostellers formel
+
+```
+BSA = √(vikt × längd / 3600)
+```
+
+Vikt i kg, längd i cm, resultat i m².
+Exempel: 73 kg, 180 cm → √(73 × 180 / 3600) = √3.65 = **1.91 m²**
+
+### 2. Ålder
+
+```
+Ålder = aktuellt år − födelseår
+        (subtrahera 1 om födelsedagen inte inträffat ännu)
+```
+
+### 3. Åldersgrupp
+
+Åldern mappas till en dekadgrupp: 20-29, 30-39, 40-49, 50-59, 60-69, 70-79. Ålder under 20 eller över 79: ingen referensgrupp tillgänglig.
+
+### 4. Slagvolym (SV)
+
+```
+SV = EDV − ESV
+```
+
+Beräknas separat för vänster (LV) och höger (RV) kammare.
+
+### 5. Ejektionsfraktion (EF)
+
+```
+EF = (SV / EDV) × 100 %
+```
+
+Dvs. ((EDV − ESV) / EDV) × 100. Anger andelen blod som pumpas ut per hjärtslag.
+
+### 6. BSA-indexerade värden
+
+Varje volym och massa divideras med BSA för att normalisera för kroppsstorlek:
+
+| Parameter | Formel | Enhet |
+|-----------|--------|-------|
+| EDV/BSA | EDV ÷ BSA | ml/m² |
+| ESV/BSA | ESV ÷ BSA | ml/m² |
+| SV/BSA | SV ÷ BSA | ml/m² |
+| LV mass/BSA | LV mass ÷ BSA | g/m² |
+
+Dessa är värdena som jämförs mot referensintervallen.
+
+### 7. Referensjämförelse
+
+Varje BSA-indexerat värde jämförs med ett [min, max]-intervall baserat på patientens kön och åldersgrupp:
+
+| Villkor | Status | Markering |
+|---------|--------|-----------|
+| värde < min | Lågt | * (asterisk) |
+| min ≤ värde ≤ max | Normalt | Ingen |
+| värde > max | Förhöjt | * (asterisk) |
+
+### 8. Visuell mätare (gauge)
+
+```
+padding   = (max − min) × 0.35
+gauge_min = min − padding
+gauge_max = max + padding
+position  = ((värde − gauge_min) / (gauge_max − gauge_min)) × 100%
+```
+
+Positionen begränsas till 0–100%. Det gröna området representerar normalintervallet.
 
 ## Referensvärden
 
@@ -26,14 +92,12 @@
 | **Vänster kammare (LV)** | EDV/BSA, ESV/BSA, SV/BSA, EF, LV-massa/BSA |
 | **Höger kammare (RV)** | EDV/BSA, ESV/BSA, SV/BSA, EF |
 
-Referensdata baserad på **David Molnar, v.2025-05-02**.
-
 ## Användning
 
 Ingen installation krävs. Öppna HTML-filen i valfri modern webbläsare.
 
-### Alternativ A — Lokal fil
-Ladda ner `index.html` och dubbelklicka för att öppna.
+### Alternativ A — Lokal fil (offline)
+Ladda ner `index.html` och dubbelklicka för att öppna. Fungerar helt offline.
 
 ### Alternativ B — GitHub Pages
 Öppna direkt via:
@@ -44,31 +108,24 @@ https://nethahussain.github.io/cardiac-mri-reference/
 ## Funktioner
 
 - **En enda fil, inga beroenden** — allt körs i en självständig HTML-fil
-- **Fungerar offline** — bara Google Fonts kräver internetanslutning (faller tillbaka till systemtypsnitt)
+- **Fungerar offline** — faller tillbaka till systemtypsnitt utan internet
 - **Direkt beräkning** — resultaten uppdateras i realtid medan du skriver
+- **XML-import** — dra och släpp XML-filer direkt i verktyget
 - **Visuella mätare** — se direkt var värdena hamnar i förhållande till normalintervallet
 - **Kopiera rapport** — kopiera formaterad rapporttext till urklipp med ett klick
+- **Redigerbar rapport** — redigera rapporttexten innan kopiering
+- **Avvikande värden markeras** — asterisk (*) vid värden utanför referensintervallet
 - **Flexibel datuminmatning** — skriv ÅÅÅÅMMDD eller ÅÅÅÅ-MM-DD
 - **Responsiv** — fungerar på dator, surfplatta och mobil
-- **Ingen patientdata sparas** — allt hanteras lokalt i webbläsaren, ingenting skickas till någon server
-
-## XML-import från CVi42
-
-Verktyget stöder import av XML-filer från CVi42, uppbyggt enligt samma princip som David Molnars originalimplementation.
+- **Ingen patientdata sparas** — allt hanteras lokalt i webbläsaren
 
 ## Workspace
 
 Referensvärdena kan redigeras via Workspace (knappen uppe till höger). Ändrade värden sparas i webbläsarens localStorage och kan återställas till originalvärden.
 
-## Krediter
-
-- **Referensvärden**: David Molnar, v.2025-05-02
-- **BSA-formel**: Mosteller (√(vikt × längd / 3600))
-- **Originalverktyg**: Baserat på `MRI_Reference_Converter_Updated_20251108.xlsm` av David Molnar
-
 ## Kontakt
 
-Vid eventuella fel i koden, kontakta: **nethahussain@gmail.com**
+Vid eventuella fel i koden, kontakta: **Netha Hussain netha.hussain@vgregion.se**
 
 ## Licens
 
