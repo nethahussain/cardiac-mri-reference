@@ -121,6 +121,10 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 .btn-copy-big{display:block;width:100%;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;letter-spacing:.08em;padding:16px 24px;border:none;border-radius:3px;cursor:pointer;transition:all .2s;background:var(--ft-pink);color:var(--ft-white);text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(153,15,61,.15)}
 .btn-copy-big:hover{background:var(--ft-pink-light);box-shadow:0 4px 16px rgba(153,15,61,.25)}
 .btn-copy-big.copied{background:var(--ft-jade)}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:40px}
+.pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--ft-ink-faint);padding:2px;line-height:1}
+.pw-toggle:hover{color:var(--ft-ink)}
 </style>
 </head>
 <body>
@@ -135,7 +139,7 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 <h2>Workspace</h2><p>Logga in f&#246;r att redigera referensv&#228;rden</p>
 <div class="login-err" id="loginErr">Fel anv&#228;ndarnamn eller l&#246;senord</div>
 <div class="field-group"><label for="loginUser">Anv&#228;ndarnamn</label><input type="text" id="loginUser" autocomplete="off"></div>
-<div class="field-group"><label for="loginPass">L&#246;senord</label><input type="password" id="loginPass"></div>
+<div class="field-group"><label for="loginPass">L&#246;senord</label><div class="pw-wrap"><input type="password" id="loginPass"><button type="button" class="pw-toggle" id="pwToggle" onclick="togglePw()">&#128065;&#8205;&#128683;</button></div></div>
 <div style="display:flex;gap:10px;margin-top:20px"><button class="btn btn-primary" onclick="doLogin()">Logga in</button><button class="btn btn-ghost" onclick="closeLogin()">Avbryt</button></div>
 </div></div>
 
@@ -228,6 +232,7 @@ try{var sv=localStorage.getItem('cardiac_mri_custom_refs');if(sv){REFS=JSON.pars
 var AGE_GROUPS=["20-29","30-39","40-49","50-59","60-69","70-79"];
 var wsLoggedIn=false,wsCurrentTab="F-LV";
 
+function togglePw(){var inp=el('loginPass'),btn=el('pwToggle');if(inp.type==='password'){inp.type='text';btn.innerHTML='&#128065;';}else{inp.type='password';btn.innerHTML='&#128065;&#8205;&#128683;';}}
 function openWorkspace(){if(wsLoggedIn){document.getElementById('wsPanel').classList.add('open');window.scrollTo({top:0,behavior:'smooth'});}else{document.getElementById('loginModal').classList.add('open');document.getElementById('loginErr').style.display='none';document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';setTimeout(function(){document.getElementById('loginUser').focus();},100);}}
 function closeLogin(){document.getElementById('loginModal').classList.remove('open');}
 function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')});}
