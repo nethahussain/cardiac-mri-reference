@@ -6,7 +6,7 @@
 
 ## Så fungerar det
 
-1. Importera XML eller fyll i patientdata manuellt (kön, födelsedatum, vikt, längd)
+1. Importera XML eller fyll i patientdata manuellt (kön, etnicitet, födelsedatum, vikt, längd)
 2. Mata in uppmätta volymer från hjärt-MR (EDV, ESV, LV-massa) för vänster och höger kammare
 3. Granska och redigera rapporten
 4. Kopiera till urklipp med ett klick för inklistring i AGFA eller andra system
@@ -31,7 +31,7 @@ Exempel: 73 kg, 180 cm → √(73 × 180 / 3600) = √3.65 = **1.91 m²**
 
 ### 3. Åldersgrupp
 
-Åldern mappas till en dekadgrupp: 20-29, 30-39, 40-49, 50-59, 60-69, 70-79. Ålder under 20 eller över 79: ingen referensgrupp tillgänglig.
+Åldern mappas till en åldersgrupp: 18-29, 30-39, 40-49, 50-59, 60-69, 70+. Ålder under 18: ingen referensgrupp tillgänglig. Tillgängliga åldersgrupper varierar beroende på etnicitet (se nedan).
 
 ### 4. Slagvolym (SV)
 
@@ -55,16 +55,16 @@ Varje volym och massa divideras med BSA för att normalisera för kroppsstorlek:
 
 | Parameter | Formel | Enhet |
 |-----------|--------|-------|
-| EDV/BSA | EDV ÷ BSA | ml/m² |
-| ESV/BSA | ESV ÷ BSA | ml/m² |
-| SV/BSA | SV ÷ BSA | ml/m² |
-| LV mass/BSA | LV mass ÷ BSA | g/m² |
+| EDVi | EDV ÷ BSA | ml/m² |
+| ESVi | ESV ÷ BSA | ml/m² |
+| SVi | SV ÷ BSA | ml/m² |
+| LVMi | LV mass ÷ BSA | g/m² |
 
 Dessa är värdena som jämförs mot referensintervallen.
 
 ### 7. Referensjämförelse
 
-Varje BSA-indexerat värde jämförs med ett [min, max]-intervall baserat på patientens kön och åldersgrupp:
+Varje BSA-indexerat värde jämförs med ett [min, max]-intervall baserat på patientens etnicitet, kön och åldersgrupp:
 
 | Villkor | Status | Markering |
 |---------|--------|-----------|
@@ -85,12 +85,24 @@ Positionen begränsas till 0–100%. Det gröna området representerar normalint
 
 ## Referensvärden
 
-Ålders- och könsspecifika referensvärden för ålder 20–79:
+Referensvärden från: Raisi-Estabragh Z, et al. *Cardiovascular Magnetic Resonance Reference Ranges From the Healthy Hearts Consortium.* JACC Cardiovasc Imaging. 2024. [doi:10.1016/j.jcmg.2024.01.009](https://www.jacc.org/doi/epdf/10.1016/j.jcmg.2024.01.009)
+
+Värdena är ålders-, köns- och etnicitetsspecifika (smooth segmentation, BSA-indexerade):
 
 | Kammare | Parametrar |
 |---------|-----------|
-| **Vänster kammare (LV)** | EDV/BSA, ESV/BSA, SV/BSA, EF, LV-massa/BSA |
-| **Höger kammare (RV)** | EDV/BSA, ESV/BSA, SV/BSA, EF |
+| **Vänster kammare (LV)** | EDVi, ESVi, SVi, EF, LVMi |
+| **Höger kammare (RV)** | EDVi, ESVi, SVi, EF |
+
+### Etniciteter och tillgängliga åldersgrupper
+
+| Etnicitet | Kvinnor | Män |
+|-----------|---------|-----|
+| **White** | 18-29, 30-39, 40-49, 50-59, 60-69, 70+ | 18-29, 30-39, 40-49, 50-59, 60-69, 70+ |
+| **Black** | 40-49, 50-59, 60-69, 70+ | 50-59, 60-69, 70+ |
+| **South Asian** | 40-49, 50-59, 60-69, 70+ | 40-49, 50-59, 60-69, 70+ |
+| **Chinese** | 18-29, 30-39, 40-49, 50-59, 60-69, 70+ | 18-29, 30-39, 40-49, 50-59, 60-69 |
+| **Mixed/Other** | 50-59, 60-69, 70+ | 50-59, 60-69, 70+ |
 
 ## Användning
 
@@ -110,6 +122,7 @@ https://nethahussain.github.io/cardiac-mri-reference/
 - **En enda fil, inga beroenden** — allt körs i en självständig HTML-fil
 - **Fungerar offline** — faller tillbaka till systemtypsnitt utan internet
 - **Direkt beräkning** — resultaten uppdateras i realtid medan du skriver
+- **Etnicitetsspecifika referensvärden** — stöd för White, Black, South Asian, Chinese, Mixed/Other
 - **XML-import** — dra och släpp XML-filer direkt i verktyget
 - **Visuella mätare** — se direkt var värdena hamnar i förhållande till normalintervallet
 - **Kopiera rapport** — kopiera formaterad rapporttext till urklipp med ett klick
