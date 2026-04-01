@@ -87,7 +87,7 @@ Positionen begränsas till 0–100%. Det gröna området representerar normalint
 
 Referensvärden från: Raisi-Estabragh Z, et al. *Cardiovascular Magnetic Resonance Reference Ranges From the Healthy Hearts Consortium.* JACC Cardiovasc Imaging. 2024. [doi:10.1016/j.jcmg.2024.01.009](https://www.jacc.org/doi/epdf/10.1016/j.jcmg.2024.01.009)
 
-Värdena är ålders-, köns- och etnicitetsspecifika (smooth segmentation, BSA-indexerade):
+Värdena är ålders-, köns- och etnicitetsspecifika (smooth segmentation, BSA-indexerade). Se **[fullständig tabell med alla referensvärden](reference-values.md)**.
 
 | Kammare | Parametrar |
 |---------|-----------|
