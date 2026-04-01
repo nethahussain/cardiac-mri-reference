@@ -19,7 +19,7 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 .section-rule{border:none;border-top:1px solid var(--ft-rule);margin:32px 0 24px}
 .section-rule.heavy{border-top:3px solid var(--ft-ink);margin:36px 0 20px}
 .section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--ft-pink);margin-bottom:16px;padding-bottom:8px;border-bottom:1px dotted var(--ft-rule)}
-.patient-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px}
+.patient-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px}
 .field-group label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ft-ink-light);margin-bottom:6px}
 .field-group input,.field-group select{width:100%;box-sizing:border-box;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;color:var(--ft-ink);background:var(--ft-white);border:1px solid var(--ft-rule);border-radius:2px;outline:none;transition:border-color .2s,box-shadow .2s,color .2s}
 .field-group input:focus,.field-group select:focus{border-color:var(--ft-pink);box-shadow:0 0 0 2px rgba(153,15,61,.08)}
@@ -74,10 +74,10 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 .ref-table th:last-child{text-align:right}
 .ref-table td{font-family:'IBM Plex Mono',monospace;font-size:13px;padding:7px 0;border-bottom:1px solid var(--ft-rule);color:var(--ft-ink)}
 .ref-table td:last-child{text-align:right;color:var(--ft-teal);font-weight:600}
-.footer{text-align:center;padding:24px 0 40px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ft-ink-faint);letter-spacing:.04em;line-height:1.8}
+.footer{text-align:center;padding:24px 0 40px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ft-ink-faint);letter-spacing:.04em;line-height:1.8}.footer a{text-decoration:none}.footer a:hover{text-decoration:underline}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .animate-in{animation:fadeUp .5s ease both}.delay-1{animation-delay:.05s}.delay-2{animation-delay:.1s}.delay-3{animation-delay:.15s}.delay-4{animation-delay:.2s}
-@media(max-width:680px){.measures-grid,.results-columns,.ref-grid{grid-template-columns:1fr}.measure-panel:first-child{border-right:none;border-bottom:1px solid var(--ft-rule)}.result-col:first-child{border-right:none;border-bottom:1px solid var(--ft-rule)}.summary-row{grid-template-columns:repeat(2,1fr)}.summary-cell{border-bottom:1px solid var(--ft-rule)}}
+@media(max-width:680px){.patient-grid{grid-template-columns:repeat(2,1fr)}.measures-grid,.results-columns,.ref-grid{grid-template-columns:1fr}.measure-panel:first-child{border-right:none;border-bottom:1px solid var(--ft-rule)}.result-col:first-child{border-right:none;border-bottom:1px solid var(--ft-rule)}.summary-row{grid-template-columns:repeat(2,1fr)}.summary-cell{border-bottom:1px solid var(--ft-rule)}}
 /* Workspace */
 .ws-btn-wrap{position:absolute;top:14px;right:0}
 .ws-link{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;background:transparent;border:1px solid var(--ft-rule);color:var(--ft-ink-faint);border-radius:2px;cursor:pointer;transition:all .2s}
@@ -225,7 +225,7 @@ body{background:var(--ft-paper);color:var(--ft-ink);font-family:'Source Serif 4'
 <div class="section-label" id="refTitle">Referensv&#228;rden</div>
 <div class="ref-grid" id="refGrid"></div></div>
 
-<footer class="footer">Enbart f&#246;r kliniskt beslutst&#246;d &#8212; verifiera alltid mot lokala riktlinjer<br>Kontakta Netha Hussain netha.hussain@vgregion.se vid eventuella fel i koden</footer>
+<footer class="footer">Enbart f&#246;r kliniskt beslutst&#246;d &#8212; verifiera alltid mot lokala riktlinjer<br>Kontakta Netha Hussain netha.hussain@vgregion.se vid eventuella fel i koden<br><br>Referensv&#228;rden fr&#229;n: Raisi-Estabragh Z, et al. Cardiovascular Magnetic Resonance Reference Ranges From the Healthy Hearts Consortium. <em>JACC Cardiovasc Imaging</em>. 2024. <a href="https://www.jacc.org/doi/epdf/10.1016/j.jcmg.2024.01.009" target="_blank" rel="noopener" style="color:var(--ft-teal)">doi:10.1016/j.jcmg.2024.01.009</a><br>Detta verktyg &#228;r licensierat under <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener" style="color:var(--ft-teal)">CC0 1.0 Universal (Public Domain)</a></footer>
 </main>
 
 <script>
