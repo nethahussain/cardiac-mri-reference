@@ -104,6 +104,20 @@ Värdena är ålders-, köns- och etnicitetsspecifika (smooth segmentation, BSA-
 | **Chinese** | 18-29, 30-39, 40-49, 50-59, 60-69, 70+ | 18-29, 30-39, 40-49, 50-59, 60-69 |
 | **Mixed/Other** | 50-59, 60-69, 70+ | 50-59, 60-69, 70+ |
 
+### Supplementaltabeller i appendix (smooth segmentation, BSA-indexerade)
+
+Verktyget använder värden från följande tabeller i artikelns appendix:
+
+| Etnicitet | Kvinnor | Män |
+|-----------|---------|-----|
+| **White** | Tabell 3 | Tabell 33 |
+| **Black** | Tabell 9 | Tabell 39 |
+| **South Asian** | Tabell 15 | Tabell 45 |
+| **Chinese** | Tabell 21 | Tabell 51 |
+| **Mixed/Other** | Tabell 27 | Tabell 57 |
+
+*Udda tabellnummer = BSA-indexerade (ml/m²), jämna = längd-indexerade (ml/m). Verktyget använder enbart BSA-indexerade värden.*
+
 ## Användning
 
 Ingen installation krävs. Öppna HTML-filen i valfri modern webbläsare.
